@@ -20,11 +20,11 @@ pair_table = pd.read_csv('C:\\Users\\banan\\Downloads\\MartingaleBJ\\classic str
 blackjack = set(['A',10])
 d_hand = []
 p_hand = []
-num_decks = 1
+num_decks = 8
 card_types = ['A',2,3,4,5,6,7,8,9,10,10,10,10]
 player_results = []
 deposit_curve = []
-deposit = 2050
+deposit = 50
 bet = deposit * 0.01
 
 # Make a deck
@@ -314,7 +314,7 @@ def battle(p_hand, d_hand):
         deposit_curve.append(deposit)    
         player_results.append(result)
        
-Let_us_play(10000)
+Let_us_play(400)
 
 df = pd.DataFrame()
 
