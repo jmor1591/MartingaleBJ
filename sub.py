@@ -7,7 +7,7 @@ lower = -1
 upper = 2
 # Execute the command while the condition is not met
 for i in range(100):
-    while (lower < 0.5 < upper or lower < (1175/2165) < upper):
+    while (lower < 0.5 < upper):
     #while (margin > 0.01):
     #for i in range(1000):
         if os.path.exists('count.txt'):

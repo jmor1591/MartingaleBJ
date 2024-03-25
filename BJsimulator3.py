@@ -9,31 +9,23 @@ import numpy as np
 import pandas as pd
 import random
 import matplotlib.pyplot as plt
-import math
 import seaborn as sns 
 
-main_table = pd.read_csv('C:\\Users\\banan\\Downloads\\BlackJack_Martingale_Simulator\\classic strategy table\\Main_Strategy_Table.txt', sep=" ", index_col=0, engine='python')
-ace_table = pd.read_csv('C:\\Users\\banan\\Downloads\\BlackJack_Martingale_Simulator\\classic strategy table\\Ace_Strategy_Table.txt', sep=" ", index_col=0, engine='python')
-ace2_table = pd.read_csv('C:\\Users\\banan\\Downloads\\BlackJack_Martingale_Simulator\\classic strategy table\\Ace2_Strategy_Table.txt', sep=" ", index_col=0, engine='python')
-pair_table = pd.read_csv('C:\\Users\\banan\\Downloads\\BlackJack_Martingale_Simulator\\classic strategy table\\Pair_Strategy_Table.txt', sep=" ", index_col=0, engine='python')
+main_table = pd.read_csv('C:\\Users\\banan\\Downloads\\MartingaleBJ\\classic strategy table\\Main_Strategy_Table.txt', sep=" ", index_col=0, engine='python')
+ace_table = pd.read_csv('C:\\Users\\banan\\Downloads\\MartingaleBJ\\classic strategy table\\Ace_Strategy_Table.txt', sep=" ",index_col = 0,engine='python')
+ace2_table = pd.read_csv('C:\\Users\\banan\\Downloads\\MartingaleBJ\\classic strategy table\\Ace2_Strategy_Table.txt', sep=" ", index_col=0, engine='python')
+pair_table = pd.read_csv('C:\\Users\\banan\\Downloads\\MartingaleBJ\\classic strategy table\\Pair_Strategy_Table.txt', sep=" ", index_col=0, engine='python')
 
 # Variable Area
 blackjack = set(['A',10])
 d_hand = []
 p_hand = []
-num_decks = 8
+num_decks = 1
 card_types = ['A',2,3,4,5,6,7,8,9,10,10,10,10]
 player_results = []
 deposit_curve = []
-original_deposit = 50
-deposit = 50
-##originally bet = 1
-bet = deposit * .01
-##added margin of error 99.5%
-margin_cons = 2.807 * .5 ##z score times sqrt(.5*.5)
-margin = 1
-lower = -1
-upper = 1.1
+deposit = 2050
+bet = deposit * 0.01
 
 # Make a deck
 def make_decks(num_decks, card_types):
@@ -93,40 +85,7 @@ def total_up(hand):
         return min(ace_value_list) + total
     else:
         return max(final_totals)
-
-##added this
-import os
-
-def update_count_file(enough=False):
-    # Check if the file exists
-    if os.path.exists('count.txt'):
-        # Open the file in read mode to read the current counts
-        with open('count.txt', 'r') as file:
-            lines = file.readlines()
-            if len(lines) == 2:
-                enough_count, total_count = map(int, lines)
-            else:
-                enough_count, total_count = 0, 0
-    else:
-        # Initialize counts if the file doesn't exist
-        enough_count, total_count = 0, 0
-
-    # Increment the total count
-    total_count += 1
-
-    # Check if 'Enough' was printed and update counts accordingly
-    if enough:
-        enough_count += 1
     
-    margin = margin_cons / max(math.sqrt(total_count),1)
-    lower = enough_count / max(total_count,1) - margin
-    upper = enough_count / max(total_count,1) + margin
-
-    # Write the updated counts back to the file
-    with open('count.txt', 'w') as file:
-        file.write(f"{enough_count}\n{total_count}")
-
-
 def Let_us_play(stacks):
    global dealer_cards, d_hand, p_hand, p1_hand, p2_hand, split, bet, result
    #balance = 255    
@@ -134,7 +93,7 @@ def Let_us_play(stacks):
    #dealer_card_feature = []
    #player_card_feature = []
    #player_results = []
-   for stack in range(stacks): ##originally stacks
+   for stack in range(stacks):
     
         result = 0
         split = 0
@@ -150,10 +109,9 @@ def Let_us_play(stacks):
         # Deal SECOND card
         p_hand.append(dealer_cards.pop(0))
         d_hand.append(dealer_cards.pop(0))
-
-        ##added
-        bet = max(5, bet)
         
+        bet = max(5, bet)
+
         ### Pair in hand ###
         if(p_hand[0] == p_hand[1]):
             #print('Pair')
@@ -207,14 +165,10 @@ def Let_us_play(stacks):
             #print('Main')
             Main = main_table.loc[total_up(p_hand), str(d_hand[0])]
             if(Main == 'D'):
-                ##added safe logic
-                #if (bet*2 > deposit/2):
-                    #Main = 'H'
-                #else:
-                    #print('Main_D')
-                    p_hand.append(dealer_cards.pop(0))
-                    bet *= 2
-                    battle(p_hand,d_hand)
+                #print('Main_D')
+                p_hand.append(dealer_cards.pop(0))
+                bet *= 2
+                battle(p_hand,d_hand)
                 
             elif(Main == 'S'): 
                 #print('Main_S')
@@ -225,10 +179,9 @@ def Let_us_play(stacks):
                 p_hand.append(dealer_cards.pop(0))
                 check_ace(p_hand)
                 
-        if deposit >=  1000:
+        if deposit >= 4000 :
              deposit_curve.append(deposit)
              print('Enough')
-             update_count_file(True)
              break
          
         #elif bet >= 256:
@@ -237,20 +190,7 @@ def Let_us_play(stacks):
         elif deposit <= 0:
              deposit_curve.append(deposit)
              print('Game Over')
-             update_count_file()
              break
-        
-        elif deposit >= original_deposit:
-            deposit_curve.append(deposit)
-            print('Over')
-            update_count_file(True)
-            break
-
-        elif deposit < original_deposit:
-            deposit_curve.append(deposit)
-            print('Under')
-            update_count_file()
-            break
          
      
                 
@@ -357,27 +297,24 @@ def battle(p_hand, d_hand):
         #print('') 
         if result == 'BJ':
             deposit = deposit + 1.5 * bet
-            ##originally bet = 1
             bet = deposit * 0.01
         elif result == 'W':
             deposit = deposit + 1 * bet
-            #originally bet = 1
             bet = deposit * 0.01
         elif result == 'Tie':
             deposit = deposit
         elif result == 'L':
             deposit = deposit - bet
             bet *= 2
-            ##added safe
             if bet > deposit:
-                bet = deposit / 2
+                bet = deposit
             
         #if deposit < 0:
         #    deposit = -999999999999999
         deposit_curve.append(deposit)    
         player_results.append(result)
        
-Let_us_play(400) #number of simulations, originally 10000
+Let_us_play(10000)
 
 df = pd.DataFrame()
 
