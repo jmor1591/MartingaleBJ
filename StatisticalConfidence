@@ -1,0 +1,63 @@
+from random import random
+from math import sqrt
+
+fair = 0.5
+unfair = 0.6
+n = 1
+wins = 0
+me = 2.057 * 0.5 / sqrt(n)
+lower = -1
+upper = 2
+
+for _ in range(100):
+    while lower<.5<upper:
+        me = 0.5 / sqrt(n)
+        lower = wins / n - me
+        upper = wins / n + me
+        print("(", round(lower,3), ",", round(upper,3), ") ", n, " ", round(me,3))
+        
+        winner = False
+        while not winner:
+            if random() < fair:
+                fairc = 2
+            else:
+                fairc = 1
+            
+            if random() < unfair:
+                unfairc = 2
+            else:
+                unfairc = 1
+                
+            if unfairc > fairc:
+                wins += 1
+                n += 1
+                winner = True
+            elif unfairc < fairc:
+                n += 1
+                winner = True
+        _ = min(_, 50)
+    
+    me = 0.5 / sqrt(n)
+    lower = wins / n - me
+    upper = wins / n + me
+    print("(", round(lower,3), ",", round(upper,3), ") ", n, " ", round(me,3), " Breakthrough!")
+    
+    winner = False
+    while not winner:
+        if random() < fair:
+            fairc = 2
+        else:
+            fairc = 1
+        
+        if random() < unfair:
+            unfairc = 2
+        else:
+            unfairc = 1
+            
+        if unfairc > fairc:
+            wins += 1
+            n += 1
+            winner = True
+        elif unfairc < fairc:
+            n += 1
+            winner = True
